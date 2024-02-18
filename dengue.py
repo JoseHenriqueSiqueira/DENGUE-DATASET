@@ -3,13 +3,16 @@ import requests
 class Dengue():
 
     def __init__(self):
-        self.url = "https://wabi-brazil-south-b-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
+        self.base_url = "https://wabi-brazil-south-b-primary-api.analysis.windows.net/public/reports"
+
         self.headers = {
             "Accept": "application/json, text/plain, */*",
             "X-PowerBI-ResourceKey": "c429283b-e400-4888-bb54-87939c5b3c87",
         }
         
     def casos(self, estado:str = None):
+
+        url = self.base_url + "/querydata?synchronous=true"
 
         payload = {
             "version": "1.0.0",
@@ -61,7 +64,7 @@ class Dengue():
             condition = {"Condition": {"In": {"Expressions": [{"Column": {"Expression": {"SourceRef": {"Source": "d"}},"Property": "UF_PARSED"}}],"Values": [[{"Literal": {"Value": f"'{estado}'"}}]]}}}
             payload['queries'][0]['Query']['Commands'][0]['SemanticQueryDataShapeCommand']['Query']['Where'].append(condition)
 
-        response = requests.post(url = self.url, headers = self.headers, json = payload)
+        response = requests.post(url = url, headers = self.headers, json = payload)
 
         result = response.json()['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
@@ -70,6 +73,8 @@ class Dengue():
         return data
     
     def obitos(self, estado:str = None):
+
+        url = self.base_url + "/querydata?synchronous=true"
 
         payload = {
             "version": "1.0.0",
@@ -122,12 +127,64 @@ class Dengue():
             condition = {"Condition": {"In": {"Expressions": [{"Column": {"Expression": {"SourceRef": {"Source": "d2"}}, "Property": "UF_PARSED"}}],"Values": [[{"Literal": {"Value": f"'{estado}'"}}]]}}}
             payload['queries'][0]['Query']['Commands'][0]['SemanticQueryDataShapeCommand']['Query']['Where'].append(condition)
 
-        response = requests.post(url = self.url, headers = self.headers, json = payload)
+        response = requests.post(url = url, headers = self.headers, json = payload)
 
         result = response.json()['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
         return result
 
+    def custom_query(self, query_shape:str):
+
+        url = self.base_url + "/querydata?synchronous=true"
+
+        payload = {
+            "version": "1.0.0",
+            "queries": [
+                {
+                    "Query": {
+                        "Commands": [
+                            {
+                                "SemanticQueryDataShapeCommand": query_shape
+                            }
+                        ]
+                    }
+                }
+            ],
+            "modelId": 3127714
+        }
+
+        response = requests.post(url = url, headers = self.headers, json = payload)
+
+        return response.json()['results'][0]['result']['data']['dsr']['DS']
+
+    def database_schema(self):
+
+        url = self.base_url + "/conceptualschema"
+
+        payload = {"modelIds":[3127714]}
+
+        response = requests.post(url = url, headers = self.headers, json = payload)
+
+        result = response.json()['schemas'][0]['schema']['Entities']
+
+        return result
 
 if __name__ == "__main__":
-    pass
+    
+    dengue = Dengue()
+
+    query_shape = {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "f", "Entity": "dMUNICIPIO", "Type": 0}
+            ],
+            "Select": [
+                {"Column": {"Expression": {"SourceRef": {"Source": "f"}}, "Property": "MUN_NOME"}}
+            ]
+        }
+    }
+
+    result = dengue.custom_query(query_shape)
+
+    print(result)
