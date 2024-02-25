@@ -85,7 +85,6 @@ class Dengue():
 
         response = requests.post(url = url, headers = self.headers, json = payload)
 
-    
         return response.json()['results'][0]['result']['data']['dsr']['DS']
 
     def database_schema(self):
@@ -96,9 +95,7 @@ class Dengue():
 
         response = requests.post(url = url, headers = self.headers, json = payload)
 
-        result = response.json()['schemas'][0]['schema']['Entities']
-
-        return result
-
+        return response.json()['schemas'][0]['schema']['Entities']
+    
 if __name__ == "__main__":
     pass
