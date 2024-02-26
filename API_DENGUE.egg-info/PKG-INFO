@@ -1,0 +1,23 @@
+Metadata-Version: 2.1
+Name: API-DENGUE
+Version: 0.0.1
+Summary: Api dengue 2024
+Author: José Henrique da Silva Siqueira
+License: MIT License
+Keywords: dengue dengue-api dengue api
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# Dengue Data Analysis
+
+##### This repository returns real data on Dengue in Brazil. It allows users to search for data related to Dengue cases, deaths and incidence rates in different states.
+
+### Libraries used
+    • requests
+
+## Documentation
+- [dengue.py](/dengueDOC.md)
+
+## Built With
+  [Python 3.11.X](https://www.python.org/downloads/) - The programming language used <br/>
+  [Ministério da saude](https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/monitoramento-das-arboviroses) - Source where the data comes from <br/>

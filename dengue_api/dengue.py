@@ -96,6 +96,3 @@ class Dengue():
         response = requests.post(url = url, headers = self.headers, json = payload)
 
         return response.json()['schemas'][0]['schema']['Entities']
-    
-if __name__ == "__main__":
-    pass
